@@ -1,0 +1,144 @@
+---
+title: "M440B HW 13"
+author: "Erick Castillo"
+date: "4/15/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\textbf{Extra Problem 1:} I'll begin by inputting the data:
+```{r}
+veloc = c(20.5,20.5,30.5,40.5,48.8,57.8)
+stop.dist = c(15.4,13.3,33.9,73.1,113,142.6) 
+```
+
+\textbf{a.} Create a scatterplot of the data.
+```{r, echo=FALSE,out.width='50%',out.height='50%',fig.align='center'}
+plot(veloc, stop.dist)
+```
+
+\textbf{b.} Find the LS line with the formula that has means for terms. Recall the formula is given by 
+$$\hat{y}=\bar{y}+\hat{\beta_1}(x-\bar{x})$$
+
+where,
+$$\hat{\beta_1}=\frac{\bar{xy}-\bar{x}\bar{y}}{\bar{x^2}-\bar{x}^2}$$
+
+Below I calculate the terms required to plug into the formula:
+```{r}
+mean(veloc*stop.dist) #xy-bar
+mean(veloc)*mean(stop.dist) #xbar*ybar
+mean(veloc^2) #x^2-bar
+mean(veloc)^2 #xbar squared
+mean(veloc) #xbar
+mean(stop.dist) #ybar
+```
+
+Compiling the above values and plugging them into the formula yields $\hat{y}=65.217+15.567(x-36.43)$, which simplifies to 
+$$\hat{y}=3.495x_i-62.049$$
+
+\textbf{c.} Find the slope and intercept of the LS line with the other formula discussed in class. Recall the formula is 
+$$\hat{y} = \bar{y}+r\frac{s_y}{s_x}(x_i-\bar{x})$$
+
+Now, using the S.D's and r that were given and the $\bar{x}$ and $\bar{y}$ values from before, we can construct a LS line of the form (worked out on a separate sheet of paper):
+$$\hat{y}=3.493x_i-62.047$$
+
+\textbf{d.} Interpret the slope coefficient.\
+\
+This means that for every one mph increase in velocity, the stopping distance increases by a factor of 3.493 ft.
+
+\textbf{e.} Predict the stopping distances for 25 mph and 75 mph. Which of these predictions is most reliable?
+\begin{itemize}
+\item $\hat{y}=3.493(25)-62.047 = 25.28$
+\item $\hat{y}=3.493(75)-62.047 = 199.93$
+\end{itemize}
+
+The most reliable  value would be 25, because it's close to the mean value of the velocities recorded. In this case, predicting the stopping distance for a vehicle going 75 mph would be unreliable as it is far from $\bar{x}$, and as discussed in class, extrapolating leads to dubious results.
+
+\textbf{f.} The $\hat{\beta}_0 = -62.047$ does not make sense. It can be interpreted that the stopping distance of an object traveling 0 mph is $-62$ feet.
+
+\textbf{g.} Compute the residuals and the fitted values.
+```{r}
+mod1 = lm(stop.dist~veloc)
+mod1$residuals
+mod1$fitted.values
+```
+
+\textbf{h.} The residual value at $30.5$ mph is $-10.59$. This means that the difference between the fitted value and the actual value is $10.59$. The negative sign indicates that the actual value is below the fitted line.
+
+\textbf{i.} Calculate the residual variance.
+```{r}
+var(stop.dist)*(1-(0.992)^2)
+```
+
+\textbf{j.} Make the residual plot.
+```{r, fig.align='center'}
+plot(mod1$residuals~veloc)
+```
+
+Notice that there appears to be a violation of normality as the residuals follow a "parabola" shape.
+
+\textbf{k.} Notice that the response variable is transformed.
+```{r}
+stop.dist2 = sqrt(stop.dist)
+mean(stop.dist2) #ybar of transformed
+```
+
+Plugging in the known values grants $\hat{y}=7.419+0.997(\frac{3.49}{15.29})(x_i-36.433)$. Upon simplifying, this grants $\hat{y}=-0.8776+0.227x_i$.\
+\
+\textbf{l.} Repeat parts g, i, and j.
+```{r}
+#compute the residuals and fitted values.
+mod2 = lm(stop.dist2~veloc)
+mod2$residuals
+mod2$fitted.values
+
+#calculate the residual variance.
+var(stop.dist2)*(1-(0.997)^2)
+
+#construct the residual plot.
+plot(mod2$residuals~veloc)
+```
+
+Notice that the transformation resulted in a residual that does not appear to have a pattern. The transformation was indeed helpful.\
+\
+\textbf{m.} Now to test the hypothesis that the true intercept is 0 for the transformed model.
+```{r}
+summary(mod2)
+```
+
+It is clear from the above p-value that at a $5\%$ level of significance, we would fail to reject $H_0:\hat{\beta}_0=0$. In other words, there is insufficient evidence to suggest that the intercept value is not zero.\
+\
+\textbf{n.} Compute the $95\%$ confidence interval for the slope of the LS line of the transformed data.
+```{r}
+confint(mod2)
+```
+
+The slope is calculated as accurately as it could be from the given data. The confidence interval for $\hat{\beta}_1$ does not include 0.\
+\
+\textbf{Extra Problem 2:} This question presents a scenario where a study noticed that the blood pressure of individuals who initially had high values, fell after a period of time where they twiddled their thumbs. Does this demonstrate that the therapy works for patients who have a high BP?\
+\
+\textbf{Response:} This does not demonstrate that therapy works for patients who have high blood pressure because there may not be a perfect association between the response and the predictor variable. This could be a form of the regression effect in play, where blood pressure tends to go towards the mean population value. If this is the case, we could expect to see individuals with lower blood pressure have an increase after the therapy.\
+\
+\textbf{Extra Problem 3:} It's given $r=0.76$, which is the correlation between $ft^2$ of lots for a house and the price in a neighborhood. If I want to estimate the price of a particular house in this neighborhood, how important is the lot size? What does $r^2$ mean in this question?\
+\
+\textbf{Response:} The lot size is an important factor in estimating the price of a house because the correlation value is very high between both these factors. $r^2 = 0.5776$, this is typically referred to as the coefficient of determination. This represents how much of the variation is explained by the model.\
+\
+\textbf{Problem 23:} A midterm and final exam both had the following characteristics:
+\begin{itemize}
+\item $r=0.5$ between each of them.
+\item $\bar{x} = \bar{y} = 75$
+\item $s_x = s_y = 10$
+\end{itemize}
+
+Where $X_i$ is the set of scores for the midterm and $Y_i$ for the final, $i=\{1,2,...,n\}$.\
+\
+\textbf{a.} If a student's score on the midterm is 95, what would I predict their final score to be?\
+\
+Using the formula mentioned in part c of the extra problem, we can plug in the given information to construct the following LS line: $\hat{y}=0.5x_i+37.5$. Plugging in 95 yields $\hat{y}=85$. That is, the student will get a score of 85 on their final.\
+\
+\textbf{b.} If a student's score is 85 on the final, what would the estimated midterm score be?\
+\
+Notice that both the sets have the same mean and standard deviation. Thus the formula for the LS line with midterm score as the response variable would be similar to the one in part a. It can be expressed as $\hat{x}=0.5y_i+37.5$, thus plugging in 85 for y yields $\hat{x}=80$.

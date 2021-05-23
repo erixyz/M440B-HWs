@@ -1,0 +1,73 @@
+---
+title: "M440B HW 15"
+author: "Erick Castillo"
+date: "4/25/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+library(leaps)
+air <- read.csv("~/M440B_HW/airpollution.csv")
+```
+\textbf{Problem 56A.} This problem is broken down into three major sections.\
+\
+\textbf{(i.)} Type the commands given in the pdf and find the most interesting information from the scatterplots and the correlation matrix.
+```{r}
+pairs(air[1:6])
+cor(air)
+```
+
+Beginning with the scatterplots, there are a few positive correlations present being Temperature with Oxidant; Insolation with Oxidant; and Wind with Humidity. There are a few negatively correlated variables, those being Day with Humidity; Temperature with Wind; Temperature with Humidity; and Wind with Oxidant.\
+\
+The correlation matrix agrees with the variables I listed above; however, some of the values were not as strongly correlated as I thought. For example, Wind and Humidity have a correlation coefficient of $0.37$.\
+\
+Notice that as the days go by, the humidity levels decrease. As the wind levels rise, the oxidant levels decrease along. As the temperature rises, both insolation and oxidant levels rise. As the temperature increases, the humidity levels tend to decrease. All these conclusions were derived from looking at the correlation matrix. Only values $\ge 0.5$.\
+\
+\textbf{(ii.)} Run a multiple regression using all 5 predictors.
+```{r}
+fullmod <- lm(Oxidant~., data = air)
+summary(fullmod)
+```
+
+The above output has a lot of information to interpret. To begin, notice that the Wind and Temperature variables are significant at a $1\%$ level. The other variables: Day, Humidity, and Insolation are not significant because of their huge p-values. This can also be seen in their t-values as they are small in magnitude when compared to the significant predictors.\
+\
+The $R^2_{Adj} \approx 0.756$. This means that $75.6\%$ of the variability in Oxidant is explained by the model. This is a relatively good fit for the data. This model could however be reduced to fit in line with the principle of parsimony.\
+\
+\textbf{(iii.)} This part of the question asks to use the regsubsets function.
+```{r}
+mod <- summary(regsubsets(Oxidant~., data = air, method = c('exhaustive','seqrep')))
+mod$outmat
+```
+
+From the above output, it is clear that the best model is given by Wind being the only predictor. The second best model is given by Wind and Temperature included. The third best model is given by Humidity, Wind, and Temperature present.\
+\
+\textbf{(iv.)} Use the $R^2$ criterion to determine the best subset model. That is, which model uses the least amount of predictors while still yielding a reasonably high $R^2$?
+```{r}
+mod1 <- lm(Oxidant~Wind, data = air)
+mod2 <- lm(Oxidant~Wind+Temperature, data = air)
+mod3 <- lm(Oxidant~Wind+Temperature+Humidity, data = air)
+```
+
+Now that the models were created, I will generate their respective summaries:
+
+```{r}
+summary(mod1)
+```
+
+The above $R^2_{Adj} \approx 0.57$. This is pretty low. Let's see what the following models generate.
+```{r}
+summary(mod2)
+```
+
+The above $R^2_{Adj} \approx 0.76$. This is better than the first model. So far this is the best of the top 3 models.
+```{r}
+summary(mod3)
+```
+
+The above $R^2_{Adj} \approx 0.77$. This does not differ much from the second model. The addition of humidity does not appear to be significant.\
+\
+This means that the best of the three models from the regsubsets function is the second model. with Wind and Temperature included as predictor variables.

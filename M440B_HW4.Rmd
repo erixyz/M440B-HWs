@@ -1,0 +1,130 @@
+---
+title: "M440B HW 4"
+author: "Erick Castillo"
+date: "2/13/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+\newcommand{\lt}{<}
+\newcommand{\gt}{>}
+
+## Problem 39
+Using the information provided on page $284$, all instanced with $\hat{\theta}-\theta_0$ can be replaced with $\frac{\hat{\theta}}{\theta_0}$ to get the desired answer.
+\
+Then the following equalities are $P(\frac{\hat{\theta}}{\theta_0}\leq \underline\delta )= \frac{\alpha}{2}$ and $P(\frac{\hat\theta}{\theta} \leq\bar\delta)=1-\frac{\alpha}{2}$.
+\
+Putting both of these together results in $P(\underline\delta \leq  \frac{\hat\theta}{\theta_0} \leq \bar\delta) = 1 - \alpha$.
+\
+Solving for $\theta_0$ results in $P(\frac{\hat\theta}{\bar\delta}\leq \theta_0 \leq \frac{\hat\theta}{\underline\delta}) =1-\alpha$.
+\
+This means that the bootstrap interval for $\frac{\hat\theta}{\theta_0}$ has an interval: $$(\frac{\hat\theta}{\bar\delta},\frac{\hat\theta}{\underline\delta})$$.
+
+
+## Problem 40
+\begin{itemize}
+\item The probability $P(|\hat\theta - \theta_0| \gt 0.01)$ can be rewritten to consider the bootstrapping process. In this case, it would be the proportion of bootstrap samples for which the bootstrap estimator has a distance from the actual estimate that is greater than 0.01. As an inequality it would be the proportion of bootstrap samples where $|\theta^*_j-\hat\theta| \gt 0.01$ for all $j=1,...,B$.
+
+\item From office hours I am aware that $E(|\hat\theta-\theta_0|)$ is the average error. The error inside the absolute value can be rewritten to express the distance between the bootstrap estimator from the actual estimate. It can be visualized as follows $$\frac{1}{B}\sum_{j=1}^B|\theta^*_j-\hat\theta|$$
+
+\item The given probability $P(|\hat\theta-\theta_0|\gt \Delta)=0.5$ can once again be rewritten to express the bootstrapping process. In the bootstrapping process it would read: the proportion where the distance between the bootstrap estimator and the actual estimate is greater than $\Delta$, where the unknown value $\Delta$ gives a gives a proportion of $0.5$. A more succinct way to write the above would be, the proportion of bootstrap samples is $0.5$ whenever $|\theta^*_j-\hat\theta|\gt \Delta$  for all $j=1,...,B$ and some $\Delta$.
+
+\end{itemize}
+
+\newpage
+
+## Bootstrapping HW
+
+\textbf{Part 1:}
+```{r}
+#create a vector of the data:
+heartrates = c(160,184,173,176,168,156,160,160,174,166) 
+```
+\
+\textbf{Part 2:}
+```{r}
+#determine the sample mean and the variance:
+ybar = mean(heartrates)
+s.2 = var(heartrates)
+ybar
+s.2
+```
+\
+\textbf{Part 3:}
+```{r}
+#create 200 bootstrap samples and compute the mean* and var* of each one.
+hrmeans = numeric(200)
+hrvars = numeric(200)
+for (i in 1:200){
+  this.samp = heartrates[sample(10,10,replace=TRUE)]
+  hrmeans[i] = mean(this.samp)
+  hrvars[i] = var(this.samp)
+}
+```
+\
+\textbf{Part 4:}
+```{r}
+#histogram of the 200 bootstrap sample means and variances:
+
+par(mfrow=c(1,2))
+hist(hrmeans,nclass=15)
+lines(c(ybar,ybar), c(0,15), col = "red", lwd = 2)
+text(ybar, 18 , round(ybar, 2))
+
+
+hist(hrvars,nclass=15)
+lines(c(s.2,s.2), c(0,15), col = "blue", lwd = 2)
+text(s.2, 18 , round(s.2, 2))
+
+```
+\
+\textbf{Part 5:}
+```{r}
+#Obtain and sort 200 values of ybar*-ybar
+bsmeanpivq <- hrmeans-167.7
+sorted.means = sort(bsmeanpivq)
+
+#finding a and b given after sorting
+a1 = (sorted.means[5]+sorted.means[6])/2
+b1 = (sorted.means[195]+sorted.means[194])/2
+a1 #value of a
+b1 #value of b
+
+#the confidence interval would be (ybar-b1, ybar-a1):
+lower1 = ybar-b1
+upper1 = ybar-a1
+
+c(lower1, upper1) #the confidence interval
+```
+\
+\textbf{Part 6:}
+```{r}
+#find the 95% bootstrap confidence
+bsvarpivq<-hrvars/80.0111
+sorted.vars = sort(bsvarpivq) 
+
+#The above suggests that second smallest value is the 0.025 quantile and 19th largest is the 0.975 quantile.
+a2 = (sorted.vars[5]+sorted.vars[6])/2
+b2 = (sorted.vars[195]+sorted.vars[194])/2
+a2 #value of a
+b2 #value of b
+
+lower2 = s.2/b2
+upper2 = s.2/a2
+
+c(lower2,upper2) #the 95% confidence interval
+```
+\
+\textbf{Part 7:}
+```{r}
+#classical approach to find the CI for sigma^2
+orig.upper = sum((heartrates-mean(heartrates))^2)/qchisq(0.025, df=9)
+orig.lower = sum((heartrates-mean(heartrates))^2)/qchisq(0.975, df=9)
+c(orig.lower,orig.upper) # the confidence interval for s^2
+
+#classical approach to find the CI for mu
+t.test(heartrates,conf.level=.95)
+```
+

@@ -1,0 +1,63 @@
+---
+title: "Math 440B HW 3"
+author: "Erick Castillo"
+date: "2/12/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 65
+I begin with the given information:
+
+\begin{itemize}
+
+\item The sample size is $n=20$ which has a distribution $N(\theta_0=10,\ \sigma^2_0=1)$.
+\item The posterior distribution is $N(\theta_{post}=15, \ \sigma^2_{post}=0.1^2)$.
+
+\end{itemize}
+
+The question asks to find the parameters of the prior distribution given the above information. On page $291$ there are two formulas given that can be used to solve this problem.
+
+\begin{itemize}
+
+\item $\xi_{post}=n\xi_0+\xi_{prior}$
+\item $\theta_{post}=\frac{n\xi_0 \bar{x}+\theta_{prior}\xi_{prior}}{n\xi_0+\xi_{prior}}$
+
+\end{itemize}
+
+From here, I just need to plug in the values. Recall that $\xi = \frac{1}{\sigma^2}$.
+
+Solving the first equation for $\xi_{prior}$ grants $\xi_{prior}=\frac{1}{0.01^2}-20(1)=80$. Thus the standard deviation of the prior distribution is $\frac{1}{\sqrt80}\approx0.1118...$.
+
+Now, solving for $\theta_{prior}$ in the second equation grants the following: $\theta_{prior}=\frac{\theta_{post}(n\xi_0+\xi_{prior})-n\bar{x}\xi_0}{\xi_{prior}}$.
+
+Plugging in the given values on the right will result in $\theta_{prior}=16.25$.
+
+## Problem 66
+The problem begins by stating that a basketball player makes two shots with a basketball. 
+
+\textbf{Part A:}\
+This means the sample has a likelihood function with a binomial distribution: $$p(x)={n \choose x}p^x(1-p)^{n-x}$$
+
+\indent Multiplying the above with the prior distribution of Unif$[0,1]$ grants a distribution that is proportional to a beta distribution which looks like beta$(x+1, \ n-x+1)$. Here $x=n=2$, thus the posterior distribution is beta$(3,1)$.
+
+\textbf{Part B:}\
+The probability of making the third shot is the posterior mean of the previously calculated distribution, making the probability $\frac{3}{4}$
+
+\newpage
+
+## Problem 31
+\textbf{Part A:}\
+There are $n^n$ ways to select samples with replacement given an original sample size of n.
+\
+\textbf{Part B:}\
+Given a sample size of $3$, there will be $27$ possible samples with replacement. They are:
+$$(1,1,1);(1,1,3);(1,1,4);(1,3,1);(1,3,3);(1,3,4);(1,4,1);(1,4,3);(1,4,4)$$
+$$(3,1,1);(3,1,3);(3,1,4);(3,3,1);(3,3,3);(3,3,4);(3,4,1);(3,4,3);(3,4,4)$$
+$$(4,1,1);(4,1,3);(4,1,4);(4,3,1);(4,3,3);(4,3,4);(4,4,1);(4,4,3);(4,4,4)$$
+
+## Problem 32
+By definition, bootstrapping begins with a sample of size n. Then, values from the sample are selected at random n times, in order to match the initial size of the sample. This process is repeated B times, and in each iteration, the MAD is calculated. From here, there will be a variety of values the MAD can take over the B iterations. A density plot can then be created to visualize the process. This density plot would be the sampling distribution of the MAD.

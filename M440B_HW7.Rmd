@@ -1,0 +1,113 @@
+---
+title: "Math 440B HW 7"
+author: "Erick Castillo"
+date: "3/4/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\textbf{Problem 7:} Find the difference in lifetimes from Group I and Group V.\
+$10\%$ weakest: The difference seems to be somwhere between 80 and 100 days.\
+Median: The difference is between 200 and 220 days.\
+$10\%$ strongest: unable to determine the difference in days as Group I's $10\%$ does not extend that low.\
+
+\textbf{Problem 11:} Recall that the hazard function is given by $h(t)=\frac{f(t)}{S(t)}$
+\
+We are given $F(t) = 1 - e^{-\alpha t^\beta}, \ t \geq 0$, whose derivative is $f(t)=\beta\alpha t^{\beta-1}e^{-\alpha t^\beta}$. When the given information is plugged into the hazard function formula, the hazard function for this distribution is given to be $$h(t)=\beta\alpha t^{\beta-1}$$
+\
+\textbf{Problem 15:} To begin, we can determine the pdf and the cdf of the prisoner's release to be given by $f(t)=\frac{1}{24}$ and $F(t)=\frac{t}{24}$ respectively. Using the hazard function defined in the prior problem, we can plug the information we know to get $h(x)=\frac{1}{24-x}$. It is apparent that the hazard function for the prisoner is the smallest at $t=0$, and grow until $t=23$.\
+\
+Finally, notice that at $h(5)=\frac{1}{19}$ and that $h(1)=\frac{1}{23}$, thus the prisoner is more likely to be released at five hours into the day than at one hour into the day.\
+\
+\textbf{Problem 17:} Want to plot given distributions F and G on a QQ-plot.\
+```{r, out.width="50%", out.height="50%", fig.align="center"}
+set.seed(1)
+F = rexp(150, rate = 1)
+G = rexp(150, rate = 2)
+qqplot(G,F)
+abline(0,1, col = 'red')
+```
+\newpage
+\textbf{Problem 18:} A sketch will be scanned in and submitted along with this pdf.\
+\
+\textbf{Problem 6a:}
+```{r, fig.align='center',out.height="40%",out.width="40%",echo=FALSE}
+library(e1071)
+
+bee = beeswax <- read.csv("C:/Users/casti/OneDrive/Desktop/M440B Stuff/Data/beeswax.csv")
+attach(bee)
+
+plot(ecdf(Hydrocarbon))
+hist(Hydrocarbon)
+probplot(Hydrocarbon, qnorm)
+
+detach(bee)
+```
+
+The distribution does not appear to be entirely normal as the points begin to deviate from the red line the further out from center we go. That is, the tails do not seem to go along with the red line.\
+\
+The $0.90,\ 0.75,\ 0.50,\ 0.25,$ and $0.10$ quantiles appear to be $15.2,\ 15,\ 14.5,\ 14,$ and $13.6$ respectively.\
+\newpage
+\textbf{Problem 47a:}
+```{r,echo=FALSE,out.width="50%",out.height="50%"}
+geyser = oldfaithful <- read.csv("C:/Users/casti/OneDrive/Desktop/M440B Stuff/Data/oldfaithful.csv")
+attach(geyser)
+
+hist(INTERVAL, breaks = 12)
+hist(DURATION, breaks = 10)
+plot(density(INTERVAL, adjust = 0.6))
+plot(density(DURATION, adjust = 0.5))
+plot(INTERVAL, DURATION)
+
+detach(geyser)
+```
+
+It appears that the bulk of the data is located on either side of the graphical representations. That is, either the interval between bursts of water are either small or large. Similarly, the duration of the bursts of water are either small or large. Very few data points are anywhere between these extremes.\
+\
+\textbf{Problem 47b:} There appears to be a positive--maybe linear, relationship between the interval between bursts and the duration of the bursts. That is, the bursts tend to last longer the longer it takes for it to pop off.
+\newpage
+\textbf{Problem 40:}
+```{r, out.width="50%", out.height="50%", echo=FALSE}
+cloud = Clouds <- read.csv("C:/Users/casti/OneDrive/Desktop/M440B Stuff/Data/Clouds.csv")
+attach(cloud)
+
+qqplot(Control, Seeded)
+abline(0,1, col='red')
+detach(cloud)
+
+newcloud = cloud[c(-6),]
+attach(newcloud)
+
+logControl = log(Control)
+logSeeded = log(Seeded)
+qqplot(logControl, logSeeded)
+abline(0,1,col="red")
+
+detach(newcloud)
+```
+
+From the plots, it is clear that seeding does increase the amount of rainfall produced by clouds. From looking at the normal Q-Q plots of the data, it is clear that there seems to be a multiplicative effect on the amount of rain from seeded clouds. The log rainfall Q-Q plots suggest that seeding the clouds has an additive effect, as the data log rainfall data appears to be parallel to the identity function $y=x$.\
+\
+Based on the Q-Q plots, I expect the upper and lower quantiles along with the whiskers and median of the Seeded boxplot to be doubled when compared to the control clouds. I expect the log normal boxplot for seeded clouds to have all its quantiles and whiskers shifted up by some units from the control boxplot.\
+\
+The following is the output for the boxplots. The left pertains to the Seeded and Control samples while the right is for the log(Seeded) and log(Control).
+```{r, echo=FALSE,out.width="50%",out.height="50%"}
+attach(newcloud)
+boxplot(Seeded, Control)
+boxplot(logSeeded, logControl)
+detach(newcloud)
+```
+
+My predictions are confirmed in the above images.\
+\newpage
+\textbf{Problem 42d:}
+```{r,echo=FALSE,fig.align="center",out.height="70%",out.width="70%"}
+illrain <- read.csv("C:/Users/casti/OneDrive/Desktop/M440B Stuff/Data/illrain.csv", header=FALSE)
+colnames(illrain) <- c(1960,1961,1962,1963,1964)
+boxplot(illrain)
+```
+
+From looking at the image of the boxplots, it's clear that 1961 had the most rain as its upper quantile is significantly higher than all the other years. On the same token, the median is also very high for that same year. The year with the least amount of rain appears to be 1960 as its median is the lowest for all the years. Strangely, 1960 also has the biggest outlier when compared to other years. All the boxplots seem to have whiskers that bottom out at $0.0$.

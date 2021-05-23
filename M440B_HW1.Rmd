@@ -1,0 +1,123 @@
+---
+title: "Math 440B HW 1"
+author: "Erick Castillo"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 8
+a. When $n=m=20$, the sample size for both the control and treatment groups is below $30$, thus we cannot apply the Central Limit Theorem to assume that the data is normally distributed. Therefore, the t-test would not be appropriate to use in this case.
+
+b. It would be appropriate to use the Mann-Whitney Test with $n=m=20$. This is because Mann-Whitney does not require a normality assumption of the data, thus making it an effective test, especially for this small sample size.
+
+## Problem 12
+Part 1: When comparing two samples, if the constructed confidence interval contains 0, then there is insufficient evidence to suggest that there is a difference between both samples.\
+\
+This is is similar to the sign test because the sign test assumes that the probability of getting either a positive or negative value is $50\%$. If $\eta=0$, means that the differences of the samples has a median of zero. This median of zero implies that there are equal amounts of positive and negative values, which is similar to the sign test assumption of $50/50$ positive and negative values.
+
+Part 3: The data has $14$ positive values and $10$ negative values. Let $W = Y_i - X_i > 0$ for $i=$ {$1,...,24$}. Because we are using the sign test, $H_0: p = 0.5$. Assuming the null hypothesis is true, then $W$~$bin(24,0.5)$. Thus, I want to know if there is sufficient evidence to suggest the positive and negative values are evenly split. 
+
+WTFind $P(W\ge14) = 1 - P(W\le13)$
+
+```{r}
+1 - pbinom(13, size = 24, prob = 0.5)
+```
+
+Above we can see this value is about $0.271$. The book suggests the use of a two-sided tail test, thus $0.271*2=0.542$. This p-value is huge, thus not significant. There is insufficient evidence to suggest that the probability of getting a positive or negative difference is not $50\%$.
+
+## Problem 24
+WTFind the null distribution of $U_Y$ when $m=3$ and $n=2$. Recall n is the treatment group and m is the control group. This means that there are $\binom{m+n}{m} = \binom{5}{3} = 10$ different assignments for the control group.
+
+The different types of ranks are as follows:
+{$1,2,3$}, {$1,2,4$}, {$1,2,5$}, {$1,3,4$}, {$2,3,4$}, {$1,3,5$}, {$2,3,4$}, {$1,4,5$}, {$2,3,5$}, {$2,4,5$}, {$3,4,5$}.
+
+Their corresponding sum of ranks: $6,7,8,8,9,9,10,10,11,12$
+
+This means that the probability of getting $6,7,11,$ or $12$ as a sum of ranks each have a $\frac{1}{10}$ chance of occurring, while getting a $8,9,$ or $10$ have a $\frac{1}{5}$ chance of occurring.
+
+The corresponding bar graph of the null distribution will appear as follows:
+
+```{r, echo = FALSE, out.width = "50%", out.height = "50%", fig.allign = "center"}
+X = c(6,7,8,9,10,11,12)
+Y = c(0.1,0.1,0.2,0.2,0.2,0.1,0.1)
+barplot(Y, names = X)
+
+```
+
+## Problem 39
+```{r,echo=FALSE,out.width = "50%",out.height = "50%"}
+test = c(676,206,230,256,280,433,337,466,497,512,794,428,452,512)
+control = c(88,570,605,617,653,2913,924,286,1098,982,2346,321,615,519)
+differences = control - test
+
+df = data.frame(test,control,differences)
+plot(control,differences)
+
+diff.mu = mean(differences)
+diff.std = sd(differences)
+```
+\
+a. To summarize the above plot, as the size of the control rate increases, so does the size of the differences between the control and test groups.
+
+```{r,echo=FALSE}
+library(MASS)
+#rank(abs(differences)) #the ranks of the differences
+t.test(control,test,paired=TRUE)
+wilcox.test(control,test,paired=TRUE)
+```
+
+\noindent d. The nonparametric method would be the most appropriate method to test the differences between test and control. This is because the sample size of both the test and control are too small to assume that normality is present.
+
+Running both tests shows the same result, that there is a significant difference between test and control.
+
+## Problem 44
+```{r,echo=FALSE}
+schiz = HW1.44_sch_table <- read.csv("C:/Users/casti/Downloads/HW1-44_sch_table.csv")
+nonschiz = HW1.44_nsch_table <- read.csv("C:/Users/casti/Downloads/HW1-44_nsch_table.csv")
+```
+
+```{r,out.width = "70%",out.height = "50%",echo=FALSE}
+par(mfrow=c(1,2))
+boxplot(schiz$Total,nonschiz$Total,horizontal=TRUE,
+        names = c("Schiz Total", "Non-Schiz Total")
+        )
+boxplot(schiz$mg.kg,nonschiz$mg.kg,horizontal=TRUE,
+        names = c("Schiz mg", "Non-Schiz mg")
+        )
+
+summary(schiz) #summary statistics for schizophrenic patients
+summary(nonschiz) #summary statistics for non-schizophrenic patients
+
+par(mfrow=c(2,2))
+hist(schiz$Total, main = 'Total Schizophrenia')
+hist(nonschiz$Total, main = 'Total non-schizophrenia')
+hist(schiz$mg.kg, main = 'Schizophrenia mg/kg')
+hist(nonschiz$mg.kg, main = 'Non-Schizophrenia mg/kg')
+
+```
+\
+\noindent d. See the above plots. Each of the plots appeared skewed (mostly to the right).
+
+```{r}
+t.test(schiz$Total,nonschiz$Total)
+t.test(schiz$mg.kg,nonschiz$mg.kg)
+```
+\noindent e. The t-test was applied on both groups and on both their variables. The results are output above. However, performing a t-test is unreasonable since the data does not appear to be normally distributed, given the above plots. Therefore the output from such a test has dubious results.
+
+```{r}
+wilcox.test(schiz$Total,nonschiz$Total)
+wilcox.test(schiz$mg.kg,nonschiz$mg.kg)
+```
+\noindent f. The results from the Mann-Whitney test are completely different from the results of the t-test. This is expected as the data was not normally distributed to begin with. The results from the Mann-Whitney test show that there is sufficient evidence to suggest that both the schizophrenic and non-schizophrenic do have a systematic difference in terms of Vitamin C and waste production (mg/kg).
+
+## Additional Question
+Two methods for testing for presence of a disease were compared. The traditional method was used on $8$ subjects and the new method was used on $2$ subjects. When the times to obtain results were compared for all $10$ tests, the fastest and third fastest results were obtained for the subjects that received the new method. Determine the exact p-value for a one-sided test. Do the data provide statistically significant evidence at $\alpha = 5\%$ that the new method tends to be faster than the traditional one?
+
+***Response***: Notice that there are $\binom{10}{2}=45$ ways to have ranks placed in the new method. From what's given in the question, I know that the sum of the ranks for the new method is $4$. This means that the p-value to test if the new method is effective comes from $P(r*\leq4)$ where $r*$ is the sum of the ranks. There is only one way to get $r*=4$ and one way to get $r*=3$, then this is a sum of $\frac{1}{45}+\frac{1}{45}=0.0444...$ Thus this p-value is enough to suggest that the new method is faster than the traditional method. 
+
+However, there does seem to be something off about this whole statistical measure. It would be better if the sample size was larger overall.
+
+

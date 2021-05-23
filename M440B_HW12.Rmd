@@ -1,0 +1,120 @@
+---
+title: "M440B HW 12"
+author: "Erick Castillo"
+date: "4/7/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\textbf{Problem 36:} Notice that the question states that pressure is a function of temperature meaning that pressure is the response variable.
+```{r,out.width='50%',out.height='50%',echo=FALSE}
+bismuth <- read.csv("~/M440B_HW/bismuth.csv")
+plot(bismuth$temperature, bismuth$pressure)
+
+#creation of the linear model.
+bismod <- lm(pressure~temperature, data = bismuth)
+abline(bismod)
+#residual plot
+plot(bismod$residuals~bismuth$temperature)
+```
+
+The left plot exhibits the OLS fit of the data while the right plot is the residual plot from the OLS model against the predictor variable. There appears to be heteroskedasticity present in the model because the residuals at one point are very extreme when compared to the rest of the other observations .\
+\
+\textbf{Problem 38:} The response variable in this case is the Young's modulus (g) while temperature is a predictor variable.
+```{r,out.width='50%',out.height='50%',echo=FALSE}
+sap <- read.csv("~/M440B_HW/sapphire.csv")
+names(sap) <- c('temp','modul')
+
+#plot the values and the fitted line.
+plot(sap$temp, sap$modul)
+sapmod <- lm(modul~temp, data = sap)
+abline(sapmod)
+
+plot(sapmod$residuals~sap$temp)
+```
+
+On the left is the scatter plot of the data along with the fitted line. On the right is the residual plot of the data. Notice that there appears to be a trend. That is, the errors do not appear to be random. It appears that there are two seperate collections of points, one on the top, the other on the bottom.\
+\
+The question further asks to construct confidence intervals for the fitted $\hat{\beta_i},\ i = \{0,1\}$. This can be easily done with the following code:
+```{r}
+confint(sapmod)
+```
+
+but that would be cheating. Instead, let's use the summary table provided by R and the following information:
+$$CI: \hat{\beta_i} \pm t_{n-2,\frac{\alpha}{2}}(SE_{\hat{\beta_i}}),\ i =\{0,1\}$$
+
+```{r,echo=FALSE}
+summary(sapmod)
+```
+
+Using the above output, I can then calculate the $95\%$ confidence interval for $\hat{\beta_0}$ as follows.
+```{r}
+quantiles1 = qt(c(0.025,0.975), df = length(sap$temp)-2)
+se0 = 13.428
+se1 = 0.0176
+
+#confidence interval for beta_0
+sapmod$coefficients[1]+quantiles1*se0
+
+#confidence interval for beta_1
+sapmod$coefficients[2]+quantiles1*se1
+```
+
+Notice these values are close to the ones produced by the confint() function.
+\newpage
+\textbf{Problem 40A:} Plot load against deflection. Does the plot appear linear?
+```{r,out.width='50%',out.height='50%',echo=FALSE}
+ring <- read.csv("~/M440B_HW/provingring.csv")
+plot(ring$Load, ring$Deflection)
+```
+
+The plot appears to be linear at first glance, however, notice that the x-axis units are increasing at a much faster rate when compared to the y-axis units. This is the first indicator that this fit may not be linear in nature.\
+\
+\textbf{B.} Run a linear regression and plot the residuals. Examine and comment on the fit.
+```{r,out.width='50%',out.height='50%',echo=FALSE}
+ringmod = lm(Deflection~Load, data = ring)
+plot(ringmod$residuals~ring$Load)
+```
+
+Notice that the residuals appear quadratic in nature. This means that a linear function would not be the best model for this data. Instead, maybe a quadratic fit would work better.\
+\
+\textbf{C.} Fit deflection as a quadratic function of load. Estimate coefficients and standard errors. Plot the residuals. Comment on the fit.
+```{r,out.width='50%',out.height='50%',echo=FALSE}
+ringmod1 = lm(Deflection~Load+I(Load^2), data = ring)
+summary(ringmod1)
+plot(ringmod1$residuals~ring$Load)
+```
+
+Notice that the residuals in the above plot do not follow some sort of pattern. This is an indication that a quadratic fit was necessary for the data. The coefficients and the standard errors are provided in the above summary table.\
+\
+\textbf{Problem 44:} The problem asks to read in both the asthma and cystfibr files, then to consider if there is a statistically significant relation between respiratory resistance and height in either group.
+```{r,out.width='50%',out.height='50%',echo=FALSE}
+asth <- read.csv("~/M440B_HW/asthma.csv")
+cyst <- read.csv("~/M440B_HW/cystfibr.csv")
+names(asth) <- c('height','resistance')
+
+plot(asth$height, asth$resistance)
+asthmod = lm(resistance~height, data = asth)
+abline(asthmod)
+plot(cyst$height, cyst$resistance)
+cystmod = lm(resistance~height, data = cyst)
+abline(cystmod)
+```
+
+The plot on the left shows the LS fit for the asthma dataset while the plot on the right shows the LS fit for the cystfibr dataset. There are several ways to see if height is a statistically significant variable in determining resistance. The easisest method is to use the summary function:
+```{r}
+summary(asthmod)
+```
+
+The p-value corresponding with height shows that there is decent evidence to suggest that the taller an individual is, the more likely they are to be susceptible to asthma.
+
+```{r}
+summary(cystmod)
+```
+
+This p-value indicates that there is very weak evidence to suggest that the taller an individual is, the less resistance they develop towards cyst in the lungs.

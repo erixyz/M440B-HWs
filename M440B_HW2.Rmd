@@ -1,0 +1,91 @@
+---
+title: "Math 440B HW 2"
+author: "Erick Castillo"
+date: "2/6/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+It is important to remember the following proportionality:
+$$Posterior \propto Likelihood \times Prior$$
+***Problem 5d***\
+The problem opens with the following information:
+$$ pmf: P(X=1)=\theta,\ P(X=2)=1-\theta$$
+With a set of three observations: $(1,\ 2,\ 2)$.
+
+From this information, the likelihood can be calculated to be $L(\theta)=\theta (1-\theta)^2$.
+
+The posterior density can then be calculated as follows:
+$$f_{\Theta | X} = \frac{\theta (1-\theta)^2 \times 1}{\int_{0}^1 \theta(1-\theta)^2 \times 1 \ d\theta}$$
+Notice that the denominator can be rewritten: 
+$$\int_{0}^1 \theta(1-\theta)^2 \ d\theta = \int_{0}^1 \theta^{2-1}(1-\theta)^{3-1} \ d\theta = \frac{\Gamma(2)\Gamma(3)}{\Gamma(2+3)}$$
+Thus allowing $f_{\Theta | X}$ to simplify to
+$$\frac{\Gamma(5)}{\Gamma(2)\Gamma(3)}\theta (1-\theta)^2 \sim \beta(2,3)$$
+***Problem 7b***\
+The probability mass function is given to be $P(X=x)=p(1-p)^{x-1}$ for $x=1,2,3,...$
+
+Its corresponding likelihood function is given to be $L(\theta)=p^n(1-p)^{\sum_{i=1}^n x_i-n}$. 
+
+The log-likelihood function can then be calculated to be $l(\theta)=nln(p) + (\sum_{i=1}^n x_i -n)ln(1-p)$.
+
+Taking its derivative, setting it equal to zero, then solving for theta produces 
+$$\hat{\theta}_{MLE}=\frac{n}{\sum x}=\frac{1}{\bar{x}}$$
+***Problem 7d***\
+Now the problem is to find the posterior distribution of p, given a prior that is uniform on the closed interval [0,1].
+
+To solve this problem, consider
+$$f_{P|X}(p|x)=\frac{p^n(1-p)^{\sum_{i=1}^n x_i-n}}{\int_{0}^{1}p^n(1-p)^{\sum_{i=1}^n x_i-n}dp}$$
+Luckily, integration isn't necessary, and as the question is similar to Problem 5, some steps can be skipped. Looking specifically at the powers in the numerator, I can conclude that the distribution is, 
+$$\beta(n+1, \ \sum_{i=1}^nx_i-n+1)$$
+Letting $n=1$ allows the simplification of the distribution to be more in line with the answer provided in the back of the book letting the distribution become
+$$\beta(2,k_1)$$ 
+With posterior mean 
+$$\frac{2}{2+k}$$
+
+***Problem 62***\
+***Part 1:***\
+To show that the Gamma distribution is a conjugate prior of the exponential distribution, I begin by getting the Likelihood equation of the exponential distribution.
+
+$$L(\lambda) = v^ne^{-v\sum \lambda_i}$$
+The prior distribution is provided on page $288$ of the textbook and is given to be
+$$f_{\Lambda}(\lambda)= \frac{v^{\alpha}}{\Gamma(\alpha)}\lambda^{\alpha-1}e^{-v\lambda}$$
+Multiplying the above will result in a posterior that should be gamma, that is,
+$$v^{n+\alpha}e^{-v(\sum \lambda_i + \lambda)} \times \frac{\lambda^{\alpha-1}}{\Gamma(\alpha)}$$
+where the stuff to the right of the multiplication sign is considered a constant and can be disregarded.
+
+Thus the above distribution is similar to
+$$** \Gamma(n+\alpha,\ \sum \lambda_i +\lambda)$$
+***Part 2:***\
+Here there are two cases to consider:\
+\
+Case 1: $\Gamma$ with $\mu_1=0.5$ and $\sigma_1=1$.\
+Case 2: $\Gamma$ with $\mu_2=10$ and $\sigma_2=20$.\
+\
+I begin with Case 1. The following system of equations can be constructed:
+$$\frac{\alpha}{\lambda}=0.5 \ and \ \frac{\alpha}{\lambda^2}=1$$
+Solving the above system grants the values $\alpha=0.25$ and $\lambda=0.5$. Implementing the above values into $**$ grants the distribution $\Gamma(20.25,\ 102.5)$ with corresponding posterior mean $\sim 0.197$, whose reciprocal grants the time $\sim 5.0617$ minutes.
+\
+\
+Next is Case 2. Solving a system similar to the one earlier, but with $\mu_2$ and $\sigma_2$ grants values of $\lambda=\frac{1}{40}$ and $\alpha=\frac{1}{4}$. Once again, plugging these values into $**$ grants the distribution $\Gamma(20.25,\ 102.025)$. The posterior mean in this case is $\sim 0.1985$ whose reciprocal grants the time $5.038$ minutes.
+\
+\newpage
+***Problem 63***\
+The book provides two cases to consider:\
+Case 1: $a=b=1$\
+Case 2: $a= 0.5, \ b=5$\
+\
+Where the above cases are values corresponding to a beta prior distribution. Notice that their situation of finding $3$ defective parts in a collection of $100$ parts is akin to a $bin(100,p)$ with a total of $3$ "successes".
+\
+\
+Recall the following about the binomial distribution:
+$$p(x) = {n \choose x} p^{x} (1-p)^{n-x} \ \propto \ p^x(1-p)^{n-x}$$
+Then recall the following about the beta distribution:
+$$f(p)=\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}p^{a-1}(1-p)^{b-1} \ \propto \ p^{a-1}(1-p)^{b-1}$$
+Multiplying both these distributions together will grant a posterior distribution which can be written as
+$$= \ p^{(x+a)-1}(1-p)^{(n+b-x)-1} \sim \beta(x+a,\ n+b-x)$$
+Thus the posterior distribution for Case 1 is $\beta(4,\ 98)$ while the posterior distribution for Case 2 is $\beta(3.5,\ 102)$. Each with posterior means $0.0392$ and $0.03301$ respectively.
+
+

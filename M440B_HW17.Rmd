@@ -1,0 +1,32 @@
+---
+title: "M440B HW 17"
+author: "Erick Castillo"
+date: "5/8/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\textbf{Problem 28:} I will be using the watchstacked.csv file available on Canvas for this problem.
+```{r}
+watch <- read.csv("~/M440B_HW/M440B Stuff/Data/watchstacked.csv")
+watch.aov <- aov(WatchData~Group,data = watch)
+summary(watch.aov)
+```
+
+The above ouput is a parametric ANOVA table. Because the p-value is so high, we conclude that there is insufficient evidence to conclude that the different watches have different means.
+```{r}
+kruskal.test(WatchData~Group, data=watch)
+```
+
+Above is the output for the non-parametric analysis. Notice that the p-value is still big, so the conclusion would be the same; however, it is interesting to see that the p-value for the Kruskal-Wallis test is more "significant" than the parametric analysis.\
+\
+\textbf{Problem 27:} I will be using the mice.csv file for this problem.
+```{r}
+mice <- read.csv("~/M440B_HW/M440B Stuff/Data/mice.CSV")
+pairwise.t.test(mice$Count, mice$Species, p.adj = "bonf")
+```
+
+The above output indicates that there is a significant difference in the mean "aggressiveness" of each of the recorded species of mice.

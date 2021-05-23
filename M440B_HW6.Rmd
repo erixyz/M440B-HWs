@@ -1,0 +1,101 @@
+---
+title: "Math 440B HW 6"
+author: "Erick Castillo"
+date: "3/3/2021"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Chapter 9 Problems:\
+\
+\textbf{Problem 56:} The symmetric distribution in this question is described to decrease at a rate much slower than that of the normal distribution. The shape of the normal probability plot in this case would have values in the middle that are straight; however, the tails would be skewed in such a way that that the left tail would have values above the straight line, while the right tail would have values below the straight line. This would happen because the extreme values would be smaller than the extreme values found on the normal distribution.\
+\
+\textbf{Problem 57:} To answer this question with respect to the Cauchy distribution, I will generate sample of values from the distribution, then apply the qqnorm() and qqline() functions to it.
+```{r, out.width="60%", out.height="60%", echo=FALSE}
+library(e1071)
+
+samp = rcauchy(100,0,1)
+probplot(samp, qnorm)
+```
+
+The above plot is generated as a result. It can be seen that the left tail has values that are 'above' the red line, while the right tail has values that are 'below' the red line. This happens because the extreme values are smaller than those found on the normal distribution.\
+\newpage
+\textbf{Problem 61a:}
+```{r, echo=FALSE, out.height="60%", out.width="70%"}
+hal = haliburton <- read.table("C:/Users/casti/OneDrive/Desktop/M440B Stuff/Data/haliburton.csv", quote="\"", comment.char="")
+
+mac = macdonalds <- read.table("C:/Users/casti/OneDrive/Desktop/M440B Stuff/Data/macdonalds.csv", quote="\"", comment.char="")
+
+mac = mac[[1]]
+hal = hal[[1]]
+
+par(mfrow=c(1,2))
+hist(mac, freq = FALSE)
+xfit = seq(min(mac), max(mac), length = length(mac))
+yfit = dnorm(xfit, mean = mean(mac), sd = sd(mac))
+lines(xfit, yfit, col = "black")
+
+hist(hal, freq = FALSE)
+xfit = seq(min(hal), max(hal), length = length(hal))
+yfit = dnorm(xfit, mean = mean(hal), sd = sd(hal))
+lines(xfit, yfit, col = "black")
+```
+
+The normal densities plotted on the histograms have a decent fit. In my opinion, the best histogram/density duo appears to be the macdonalds one. The most volatile stock seems to be haliburton as its histogram tends to "poke out" more often out of the fitted density curve.\
+\
+\textbf{Problem 61b:} The following are normal probability plots for each of the following stocks:
+```{r,echo=FALSE, out.height="60%", out.width="70%"}
+par(mfrow=c(1,2))
+probplot(mac, qnorm)
+probplot(hal, qnorm)
+```
+
+The plot on the left belongs to the macdonald stock and the plot on the right to the haliburton stock. Just as mentioned before, the macdonald stock seems the closest to normal when compared to haliburton. The qnorm in the code stands for the quantiles of the normal distribution.
+\newpage
+Chapter 10 Problems:\
+\
+\textbf{Problem 1:} This is the ecdf of the array provided.
+```{r,echo=FALSE,out.width="50%",out.height="50%"}
+vector1 = c(1,14,10,9,11,9)
+plot(ecdf(vector1))
+```
+
+\textbf{Problem 3:}\ 
+Looking at the melting points ecdf, I am able to gather that the lower quantile is just slightly below 63.4 degrees, the upper quantile is just above 63.8 degrees, and the median is about 63.6 degrees Celsius.\
+\
+\textbf{Problem 4:} The random variables $I_{(-\infty,x]}(X_i)$ are independent because the random variables themselves do not depend on each other, they depend on the current value of x under consideration.\
+\
+\textbf{Problem 43:}\
+```{r, echo=FALSE, out.width="100%",out.height="80%"}
+k70 = kevlar70 <- read.table("C:/Users/casti/OneDrive/Desktop/M440B Stuff/Data/kevlar70.csv", quote="\"", comment.char="")
+k80 = kevlar80 <- read.table("C:/Users/casti/OneDrive/Desktop/M440B Stuff/Data/kevlar80.csv", quote="\"", comment.char="")
+k90 = kevlar90 <- read.table("C:/Users/casti/OneDrive/Desktop/M440B Stuff/Data/kevlar90.csv", quote="\"", comment.char="")
+
+k70 = k70[[1]]
+k80 = k80[[1]]
+k90 = k90[[1]]
+
+par(mfrow=c(1,3))
+probplot(k70, qnorm)
+probplot(k70, qunif)
+probplot(k70, qexp)
+
+par(mfrow=c(1,3))
+probplot(k80, qnorm)
+probplot(k80, qunif)
+probplot(k80, qexp)
+
+par(mfrow=c(1,3))
+probplot(k90, qnorm)
+probplot(k90, qunif)
+probplot(k90, qexp)
+```
+
+The first set of pictures pertains to the kevlar 70 data set. This data set appears to have a normal distribution as it lines up very accurately with the red line.\
+\
+The second set of pictures pertains to the kevlar 80 data set. This data set does not appear to align with any specific type of distribution, however, it does appear to be most inline with the exponential distribution.\
+\
+The final set of picture pertains to the kevlar 90 data set. This data, much like the kevlar 80 data set, does not really appear to align to a specific distribution. If I had to choose one distribution that it appears to mostly be similar to, it would have to be the exponential distribution as the majority of the data is in line with the red line.

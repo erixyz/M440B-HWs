@@ -1,0 +1,77 @@
+---
+title: "M440B HW 5"
+author: "Erick Castillo"
+date: "2/18/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\textbf{Permutation t-tests}\
+
+\textbf{Problem 1}\
+
+a. A permutation test makes less of an assumption about the data than a t-test. Where a t-test assumes the data is normally distributed, the two sample permutation test only assumes the data comes from independent i.i.d samples.
+
+b. There would be a total of ${130 \choose 65}$ total permutations. This value is $\approx9.5067 \times 10^{37}$.
+
+c. Execute and understand the provided code:
+```{r, echo = FALSE, out.width='50%',out.height='50%'}
+bodtmp = bodytemp <- read.csv("~/M440B_HW/bodytemp.csv")
+attach(bodtmp)
+
+#ordinary 2 sample t-test.
+#t.test(temperature~gender, var.equal=TRUE)
+
+mean.diff<-mean(temperature[gender==1])-mean(temperature[gender==2])
+
+#the following function generates resamples of the data from gender 1 and 2.
+one.test <- function(x,y) {
+  xstar<-sample(x)
+  mean(y[xstar==1])-mean(y[xstar==2])
+  } 
+
+#the code below uses the function defined above 1000 times.
+many.meandiffs <- replicate(1000, one.test(gender,temperature)) 
+
+#this code will generate the permutation distribution
+hist(many.meandiffs)
+abline(v=mean.diff, lwd=2, col="purple")
+```
+d. The figure indicates that there is a difference between the temperatures of females and females.
+
+e. Calculate the above p-value. It is below:
+```{r, echo=FALSE}
+lpval = findInterval(mean.diff, sort(many.meandiffs))/1000
+lpval
+```
+f. The strength of the evidence based on the approximate two sided p-value:
+```{r, echo=FALSE}
+rhs = findInterval(-1*mean.diff, sort(many.meandiffs))
+rpval = (1000-rhs)/1000
+twopval = (lpval+rpval)
+twopval
+```
+The above p-value is significant at $5\%$ thus there is sufficient evidence to suggest that the mean body temperatures are not equal.
+
+\newpage
+
+\textbf{Problem 2}\
+For each gender perform a one-sample permutation t-test of the hypothesis that the mean body temperature is 98.6 degrees.
+
+\textbf{Response:}\
+The following answers were gathered utilizing the table provided:\
+\
+\underline{Males}: the one sided p-value is $\frac{5}{32} \approx 0.156$ and the two sided p-value is $\frac{10}{32} \approx 0.313$. Both p-values are not significant, thus in both cases I would fail to reject the null hypothesis; the null hypothesis being $H_0: \mu = 98.6$.\
+The one sided mid p-value for males is $\frac{4.5}{32} \approx 0.141$ while the two sided mid p-value is $\frac{9}{32} \approx 0.281$. Once again both these p-values are not significant, thus I would fail to reject the null hypothesis.\
+\
+\underline{Females}: the one sided p-value is $\frac{7}{32} \approx 0.219$ while the two sided p-value is $\frac{14}{32} \approx 0.438$. Both p-values are not significant, thus I would fail to reject the null hypothesis.\
+The one sided mid p-value is $\frac{6}{32} \approx 0.188$ and the two sided mid p-value is $\frac{12}{32} = 0.375$. Once again the p-values are not significant, thus leading once again to a failure to reject the null hypothesis.\
+\
+For both sexes, the samples drawn did not provide sufficient evidence to show that the average body temperature is much different from 98.6 degrees.
+
+
+
+

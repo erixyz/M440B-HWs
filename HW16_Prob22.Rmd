@@ -1,0 +1,46 @@
+---
+title: "HW 16 Problem 22"
+author: "Erick Castillo"
+date: "4/30/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+tabs <- read.csv("~/M440B_HW/M440B Stuff/Data/tablets2.csv")
+tabs
+```
+
+\textbf{22.} The table for this question has 7 treatments with 10 samples in each. The following is the output for the code available on Canvas.
+```{r}
+t1 <- stack(tabs)
+t2 <- aov(values~ind,data=t1)
+
+summary(t2)
+
+TukeyHSD(t2)
+```
+
+The above output suggest the following:\
+\
+The Analysis of Variance (AOV) table indicates that there is very strong evidence to suggest that one of the differential effects $(\alpha_i)$ for $i = \{1,...,7\}$ is not equal to the others.\
+\
+The Tukey function output indicates that the means of the following treatments are significantly different:
+\begin{itemize}
+\item Lab 1 with Lab 5.
+\item Lab 2 with Lab 4.
+\item Lab 2 with Lab 5.
+\item Lab 2 with Lab 6.
+\item Lab 2 with Lab 7.
+\item Lab3 with Lab 5.
+\end{itemize}
+
+The function also indicates that the following treatments have weak evidence that their means are different:
+\begin{enumerate}
+\item Lab 1 and Lab 4.
+\item Lab3 and Lab 4.
+\item Lab 5 and Lab 7.
+\end{enumerate}
